@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My English Notebook — Laura</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#F9F9F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:2rem 1rem;}
+.nb{max-width:860px;margin:0 auto;background:#FFF;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nb-title{font-size:24px;font-weight:600;margin-bottom:4px;color:#222;}
+.nb-sub{font-size:13px;color:#888;margin-bottom:1.75rem;}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.75rem;}
+.tab{padding:8px 18px;border-radius:40px;border:2px solid transparent;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;opacity:0.45;transition:opacity .15s;}
+.tab.active{opacity:1;border-color:currentColor;}
+.section{display:none;}.section.active{display:block;}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:8px;margin-bottom:1.25rem;background:#F0F0F0;color:#666;}
+.search-box{position:relative;margin-bottom:1rem;}
+.search-box input{width:100%;padding:9px 12px 9px 40px;font-size:14px;border-radius:8px;border:1px solid #DDD;background:#FFF;color:#333;}
+.search-box input::placeholder{color:#CCC;}
+.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:#BBB;fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;}
+.chip{padding:5px 14px;border-radius:40px;border:none;font-size:12px;cursor:pointer;font-weight:500;opacity:0.45;transition:opacity .15s;}
+.chip.active{opacity:1;}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;}
+.vitem{background:#FFF;border:1px solid #EEE;border-left:3px solid #7AABDC;border-radius:8px;padding:12px;}
+.v-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.v-en{font-size:15px;font-weight:500;color:#222;}
+.v-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.v-es{font-size:12px;color:#888;margin-bottom:6px;}
+.v-ex{font-size:12px;font-style:italic;}
+.gcat-title,.ecat-title{font-size:11px;font-weight:600;color:#AAA;text-transform:uppercase;letter-spacing:.07em;margin:1.25rem 0 8px;padding-bottom:4px;border-bottom:1px solid #F0F0F0;}
+.gcat-title:first-child,.ecat-title:first-child{margin-top:0;}
+.gitem,.eitem{background:#FFF;border:1px solid #EEE;border-radius:8px;padding:12px;margin-bottom:8px;}
+.gitem.tenses,.eitem.tenses{border-left:3px solid #7AABDC;}
+.gitem.wordorder,.eitem.wordorder{border-left:3px solid #A898D8;}
+.gitem.verbpat,.eitem.verbpat{border-left:3px solid #7AC49A;}
+.gitem.preps,.eitem.preps{border-left:3px solid #D4B870;}
+.gitem.connectors,.eitem.connectors{border-left:3px solid #D89898;}
+.eitem.other{border-left:3px solid #CCC;}
+.g-title{font-size:14px;font-weight:500;color:#222;margin-bottom:6px;}
+.g-pat{font-size:12px;color:#666;font-family:monospace;background:#F5F5F5;padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;}
+.g-good{font-size:12px;color:#1A6A3A;margin-bottom:2px;}
+.g-bad{font-size:12px;color:#8A3030;}
+.pitem{background:#FFF;border:1px solid #EEE;border-left:3px solid #A898D8;border-radius:8px;padding:12px;margin-bottom:10px;}
+.p-verb{font-size:15px;font-weight:500;color:#222;}
+.p-mean{font-size:12px;color:#888;margin:2px 0 6px;}
+.p-ex{font-size:12px;color:#4A3898;font-style:italic;line-height:1.7;white-space:pre-line;}
+.e-wrong{font-size:13px;color:#8A3030;text-decoration:line-through;margin-bottom:4px;}
+.e-right{font-size:13px;color:#1A6A3A;font-weight:500;margin-bottom:4px;}
+.e-why{font-size:12px;color:#888;}
+.score-wrap{margin-bottom:1.25rem;}
+.score-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.score-label{font-size:13px;color:#888;}
+.score-val{font-size:14px;font-weight:500;color:#222;}
+.prog-bar{width:100%;height:6px;background:#EEE;border-radius:20px;overflow:hidden;}
+.prog-fill{height:100%;background:#7AABDC;border-radius:20px;transition:width .3s;}
+.qcard{background:#F8F8F8;border-radius:12px;padding:1.25rem;}
+.q-text{font-size:15px;font-weight:500;color:#222;margin-bottom:1rem;}
+.opts{display:grid;gap:8px;}
+.opt{padding:10px 14px;border-radius:8px;border:1px solid #DDD;font-size:13px;cursor:pointer;background:#FFF;color:#333;text-align:left;}
+.opt:hover{background:#F4E8B8;border-color:#D4B870;color:#7A5810;}
+.opt.ok{background:#C2E8D0;border-color:#7AC49A;color:#1A6A3A;}
+.opt.ko{background:#F4CCCC;border-color:#D89898;color:#8A3030;}
+.qfb{font-size:13px;margin-top:10px;padding:8px 12px;border-radius:8px;display:none;}
+.qfb.show{display:block;}
+.qfb.ok{background:#C2E8D0;color:#1A6A3A;}
+.qfb.ko{background:#F4CCCC;color:#8A3030;}
+.next-btn{margin-top:1rem;padding:8px 18px;border-radius:40px;border:none;background:#F4E8B8;color:#7A5810;font-size:13px;font-weight:500;cursor:pointer;display:none;}
+.next-btn.show{display:inline-block;}
+.empty{font-size:14px;color:#CCC;text-align:center;padding:2rem;}
+</style>
+</head>
+<body>
+<div class="nb">
+<div class="nb-title">My English notebook</div>
+<div class="nb-sub">Laura · UX/UI designer · B1 → B2/C1</div>
+
+<div class="tabs">
+  <button class="tab active" id="tab-vocab" style="background:#C8E0F4;color:#1A5A8A;" onclick="sw('vocab',this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    Vocabulary
+  </button>
+  <button class="tab" id="tab-grammar" style="background:#C2E8D0;color:#1A6A3A;" onclick="sw('grammar',this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    Grammar
+  </button>
+  <button class="tab" id="tab-phrasal" style="background:#D8D0F0;color:#4A3898;" onclick="sw('phrasal',this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    Phrasal verbs
+  </button>
+  <button class="tab" id="tab-errors" style="background:#F4CCCC;color:#8A3030;" onclick="sw('errors',this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    My errors
+  </button>
+  <button class="tab" id="tab-quiz" style="background:#F4E8B8;color:#7A5810;" onclick="sw('quiz',this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+    Practice
+  </button>
+</div>
+
+<div id="vocab" class="section active">
+  <div class="badge">📅 Session 1 — 06/06/2026</div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="vs" placeholder="Search vocabulary..." oninput="fv(this.value)">
+  </div>
+  <div class="filter-row" id="vfilts"></div>
+  <div class="vgrid" id="vgrid"></div>
+</div>
+
+<div id="grammar" class="section">
+  <div class="badge">📅 Session 1 — 06/06/2026</div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="gs" placeholder="Search grammar rules..." oninput="renderGrammar()">
+  </div>
+  <div class="filter-row" id="gfilts"></div>
+  <div id="glist"></div>
+</div>
+
+<div id="phrasal" class="section">
+  <div class="badge">📅 Session 1 — 06/06/2026</div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="ps" placeholder="Search phrasal verbs..." oninput="rp(this.value)">
+  </div>
+  <div id="plist"></div>
+</div>
+
+<div id="errors" class="section">
+  <div class="badge">📅 Session 1 — 06/06/2026</div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="es2" placeholder="Search my errors..." oninput="renderErrors()">
+  </div>
+  <div class="filter-row" id="efilts"></div>
+  <div id="elist"></div>
+</div>
+
+<div id="quiz" class="section">
+  <div class="badge">📅 Session 1 — 06/06/2026</div>
+  <div class="score-wrap">
+    <div class="score-top"><span class="score-label">Progress</span><span class="score-val" id="sc">0 / 10</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
+  </div>
+  <div id="qarea"></div>
+</div>
+</div>
+
+<script>
+const VOCAB=[
+  {en:"go over",es:"repasar, revisar",ex:"Let's go over the prototype before the meeting.",tag:"professional"},
+  {en:"take a look at",es:"echar un vistazo a",ex:"Can you take a look at my wireframes?",tag:"professional"},
+  {en:"struggle to",es:"tener dificultades para + verbo",ex:"Users are struggling to find the button.",tag:"general"},
+  {en:"struggle with",es:"tener dificultades con + nombre",ex:"We're struggling with the payment flow.",tag:"general"},
+  {en:"rethink",es:"replantear",ex:"We need to rethink the whole home screen.",tag:"uxui"},
+  {en:"locate",es:"encontrar, ubicar",ex:"Users can't locate the checkout button.",tag:"uxui"},
+  {en:"make sure",es:"asegurarse de",ex:"Make sure the prototype has no errors.",tag:"professional"},
+  {en:"handoff",es:"entrega al equipo de desarrollo",ex:"After the handoff, the developers found issues.",tag:"uxui"},
+  {en:"be missing / was missing",es:"faltar",ex:"Some components were missing from the design.",tag:"uxui"},
+  {en:"showcase",es:"presentar (profesional)",ex:"We'll showcase the final design to the client.",tag:"professional"},
+  {en:"send over",es:"enviar (contexto profesional)",ex:"Can you send over the assets?",tag:"professional"},
+  {en:"jump into",es:"lanzarse a, empezar de golpe",ex:"Don't jump into the redesign without reviewing first.",tag:"general"},
+  {en:"sign off on",es:"dar el visto bueno",ex:"The PM needs to sign off on the design.",tag:"professional"},
+  {en:"tight deadline",es:"plazo ajustado",ex:"We're working with very tight deadlines.",tag:"professional"},
+  {en:"meet a deadline",es:"cumplir un plazo",ex:"We need to meet the deadline by Friday.",tag:"professional"},
+  {en:"miss a deadline",es:"no cumplir un plazo",ex:"We can't miss this deadline.",tag:"professional"},
+  {en:"anyway",es:"de todas formas, igualmente",ex:"We sent the assets anyway.",tag:"general"},
+  {en:"home screen",es:"pantalla de inicio",ex:"We need to redesign the home screen.",tag:"uxui"},
+  {en:"development team",es:"equipo de desarrollo",ex:"The development team found missing components.",tag:"uxui"},
+  {en:"errors / bugs",es:"errores",ex:"The prototype had several bugs.",tag:"uxui"},
+  {en:"receive feedback",es:"recibir feedback",ex:"I received feedback from the client.",tag:"professional"},
+  {en:"ask for feedback",es:"pedir feedback",ex:"I asked the PM for feedback.",tag:"professional"},
+  {en:"act on feedback",es:"actuar según el feedback",ex:"We need to act on the client's feedback.",tag:"professional"},
+  {en:"incorporate feedback",es:"incorporar el feedback",ex:"I've incorporated their feedback into the design.",tag:"professional"},
+];
+const GRAMMAR=[
+  {title:"Present perfect continuous",pat:"have/has + been + verb-ing",good:"✅ It has been very difficult to find...",bad:"❌ It has being very difficult...",cat:"tenses"},
+  {title:"Past perfect — past before past",pat:"had + past participle",good:"✅ They had already started when we called.",bad:"❌ They have already started when we called.",cat:"tenses"},
+  {title:"was/were + missing",pat:"subject + was/were + missing",good:"✅ Some components were missing.",bad:"❌ Some components were missed.",cat:"tenses"},
+  {title:"still / already / just / yet — word order",pat:"still BEFORE aux | already/just AFTER have | yet at END",good:"✅ I still haven't / I've already sent / not yet",bad:"❌ I haven't still / I already have sent",cat:"wordorder"},
+  {title:"Indirect questions — word order",pat:"...where the problem IS (not 'is the problem')",good:"✅ I don't understand where the problem is.",bad:"❌ I don't understand where is the problem.",cat:"wordorder"},
+  {title:"before / after + -ing",pat:"before/after + verb-ing",good:"✅ After going over the results...",bad:"❌ After go over the results...",cat:"verbpat"},
+  {title:"be/get used to + -ing",pat:"be/get used to + verb-ing (NOT infinitive)",good:"✅ I'm used to presenting.",bad:"❌ I'm used to present.",cat:"verbpat"},
+  {title:"to as preposition → always + -ing",pat:"look forward to / get used to → always + -ing",good:"✅ I'm looking forward to presenting.",bad:"❌ I'm looking forward to present.",cat:"verbpat"},
+  {title:"decide + to + infinitive",pat:"decide + to + verb (NOT -ing)",good:"✅ We decided to send over the assets.",bad:"❌ We decided sending over the assets.",cat:"verbpat"},
+  {title:"struggle to + verb / struggle with + noun",pat:"struggle to + infinitive OR struggle with + noun",good:"✅ Struggling to find it / Struggling with the flow",bad:"❌ Struggling for find it",cat:"verbpat"},
+  {title:"ask someone FOR something",pat:"ask + person + for + thing",good:"✅ I asked the PM for feedback.",bad:"❌ I asked feedback to the PM.",cat:"preps"},
+  {title:"in Figma / in Slack (tools use 'in')",pat:"in + tool/platform name",good:"✅ in Figma, in Notion, in Jira",bad:"❌ on Figma, on Notion",cat:"preps"},
+  {title:"although / even though vs besides",pat:"although = aunque | besides = además",good:"✅ Although it's hard, I'm improving.",bad:"❌ Besides it's hard, I'm improving.",cat:"connectors"},
+];
+const ERRORS=[
+  {wrong:"It has being very difficult",right:"It has been very difficult",why:"Present perfect continuous = have/has + BEEN + -ing",cat:"tenses"},
+  {wrong:"different smalls projects",right:"different small projects",why:"Adjectives in English never take a plural 's'",cat:"other"},
+  {wrong:"the pay button",right:"the payment button / checkout button",why:"'Pay' alone doesn't work as an adjective here",cat:"other"},
+  {wrong:"I haven't still started",right:"I still haven't started",why:"'Still' goes BEFORE the auxiliary verb in negatives",cat:"wordorder"},
+  {wrong:"After go over",right:"After going over",why:"After/before always need + -ing, not the infinitive",cat:"verbpat"},
+  {wrong:"asked feedback to the PM",right:"asked the PM for feedback",why:"In English: ask + person + FOR + thing",cat:"preps"},
+  {wrong:"I'm not get used to",right:"I'm not used to / I'm not getting used to",why:"Use 'be' OR 'get' — not both at once",cat:"verbpat"},
+  {wrong:"getting used to receive",right:"getting used to receiving",why:"'to' here is a preposition, so always + -ing after it",cat:"verbpat"},
+  {wrong:"was missed",right:"was missing",why:"'Missing' = absent. 'Missed' = someone felt its absence emotionally",cat:"tenses"},
+  {wrong:"had got over",right:"had gone over",why:"Go over → past participle = gone (not got)",cat:"tenses"},
+  {wrong:"besides (= aunque)",right:"although / even though",why:"'Besides' = además. 'Aunque' = although / even though",cat:"connectors"},
+  {wrong:"decided sent over",right:"decided to send over",why:"After 'decide' always use to + infinitive",cat:"verbpat"},
+  {wrong:"on Figma / on Slack",right:"in Figma / in Slack",why:"Tools use 'in': in Figma, in Notion, in Jira",cat:"preps"},
+];
+const PHRASAL=[
+  {verb:"go over",mean:"repasar, revisar",ex:"\"Let's go over the wireframes.\"\n\"Can we go over the results together?\""},
+  {verb:"take a look at",mean:"echar un vistazo a",ex:"\"Take a look at the new prototype.\"\n\"Could you take a look at my designs?\""},
+  {verb:"send over",mean:"enviar (profesional)",ex:"\"I'll send over the files after the meeting.\"\n\"Can you send over the updated assets?\""},
+  {verb:"jump into",mean:"lanzarse a, empezar de golpe",ex:"\"Don't jump into coding before the handoff.\"\n\"We jumped into the redesign too quickly.\""},
+  {verb:"sign off on",mean:"dar el visto bueno",ex:"\"The client needs to sign off on the design.\"\n\"Did the PM sign off on the final prototype?\""},
+  {verb:"act on",mean:"actuar según algo",ex:"\"We need to act on this feedback.\"\n\"The team acted on the usability results.\""},
+];
+const QUIZ=[
+  {q:"Complete: 'We should ___ the results before the meeting.'",opts:["go over","go about","go through with","go under"],c:0,exp:"'Go over' = revisar/repasar."},
+  {q:"Which is correct?",opts:["After go over the tests...","After going over the tests...","After to go over...","After went over the tests..."],c:1,exp:"After/before always need + -ing!"},
+  {q:"'I haven't still finished' — what's wrong?",opts:["'Haven't' is wrong","'Still' should go before 'haven't'","'Finished' should be 'finish'","Nothing is wrong"],c:1,exp:"'Still' goes BEFORE the auxiliary: 'I still haven't finished'"},
+  {q:"How do you say 'pedirle feedback al PM'?",opts:["Ask feedback to the PM","Ask the PM for feedback","Ask for feedback to the PM","Ask the PM feedback"],c:1,exp:"ask + person + FOR + thing. Always!"},
+  {q:"'Some icons ___ from the design.'",opts:["were missed","were missing","was missing","are missed"],c:1,exp:"'Were missing' = faltaban. 'Were missed' = fueron echados de menos."},
+  {q:"Which is correct?",opts:["I'm getting used to present","I'm getting used to presenting","I'm getting used to presented","I'm used to get used to presenting"],c:1,exp:"'to' here is a preposition → always + -ing!"},
+  {q:"You want to say 'aunque'. Which word?",opts:["Besides","However","Although","Despite"],c:2,exp:"'Although/even though' = aunque. 'Besides' = además."},
+  {q:"'The development team ___ already started when we called.'",opts:["have","has","had","was"],c:2,exp:"Past before another past = past perfect: had + past participle."},
+  {q:"Most professional way to say 'enviar los archivos'?",opts:["Send the files","Send over the files","Pass the files","Give the files"],c:1,exp:"'Send over' is more natural in professional American English."},
+  {q:"'In' or 'on' Figma?",opts:["on Figma","in Figma","at Figma","into Figma"],c:1,exp:"Tools use 'in': in Figma, in Notion, in Jira."},
+];
+
+const catLabels={tenses:"Tenses",wordorder:"Word order",verbpat:"Verb patterns",preps:"Prepositions",connectors:"Connectors",other:"Other"};
+const catBg={tenses:"#C8E0F4",wordorder:"#D8D0F0",verbpat:"#C2E8D0",preps:"#F4E8B8",connectors:"#F4CCCC",other:"#E8E8E8"};
+const catCol={tenses:"#1A5A8A",wordorder:"#4A3898",verbpat:"#1A6A3A",preps:"#7A5810",connectors:"#8A3030",other:"#555"};
+const vtBg={uxui:"#D8D0F0",professional:"#C8E0F4",general:"#C2E8D0"};
+const vtCol={uxui:"#4A3898",professional:"#1A5A8A",general:"#1A6A3A"};
+const vtLabel={uxui:"UX/UI",professional:"Pro",general:"General"};
+let atag='all',gcat='all',ecat='all',cq=0,score=0,done=false;
+
+function sw(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz')rq();
+}
+function chip(label,onclick,bg,col,active){
+  return `<button class="chip${active?' active':''}" style="background:${bg};color:${col}" onclick="${onclick}">${label}</button>`;
+}
+function buildVfilts(){
+  const counts={uxui:0,professional:0,general:0};
+  VOCAB.forEach(v=>counts[v.tag]++);
+  document.getElementById('vfilts').innerHTML=
+    chip('All · '+VOCAB.length,"ft('all',this)",'#C8E0F4','#1A5A8A',atag==='all')+
+    ['uxui','professional','general'].map(t=>chip(vtLabel[t]+' · '+counts[t],`ft('${t}',this)`,vtBg[t],vtCol[t],atag===t)).join('');
+}
+function rv(f='',t='all'){
+  const g=document.getElementById('vgrid');
+  const items=VOCAB.filter(v=>(t==='all'||v.tag===t)&&(v.en+v.es).toLowerCase().includes(f));
+  g.innerHTML=items.length?items.map(v=>`<div class="vitem"><div class="v-top"><div class="v-en">${v.en}</div><span class="v-tag" style="background:${vtBg[v.tag]};color:${vtCol[v.tag]}">${vtLabel[v.tag]}</span></div><div class="v-es">${v.es}</div><div class="v-ex" style="color:${vtCol[v.tag]}">"${v.ex}"</div></div>`).join(''):'<p class="empty">No results found.</p>';
+}
+function fv(v){rv(v.toLowerCase(),atag);}
+function ft(t,btn){atag=t;document.querySelectorAll('#vfilts .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');rv(document.getElementById('vs').value.toLowerCase(),t);}
+function buildGfilts(){
+  const counts={tenses:0,wordorder:0,verbpat:0,preps:0,connectors:0};
+  GRAMMAR.forEach(g=>counts[g.cat]++);
+  document.getElementById('gfilts').innerHTML=['all','tenses','wordorder','verbpat','preps','connectors'].map(c=>{
+    const bg=c==='all'?'#C2E8D0':catBg[c];
+    const col=c==='all'?'#1A6A3A':catCol[c];
+    const label=c==='all'?'All · '+GRAMMAR.length:catLabels[c]+' · '+counts[c];
+    return chip(label,`gft('${c}',this)`,bg,col,c===gcat);
+  }).join('');
+}
+function renderGrammar(){
+  const f=document.getElementById('gs').value.toLowerCase();
+  const items=GRAMMAR.filter(g=>(gcat==='all'||g.cat===gcat)&&(g.title+g.pat+g.good+g.bad).toLowerCase().includes(f));
+  const list=document.getElementById('glist');
+  if(!items.length){list.innerHTML='<p class="empty">No results found.</p>';return;}
+  if(gcat!=='all'){list.innerHTML=items.map(g=>`<div class="gitem ${g.cat}"><div class="g-title">${g.title}</div><div class="g-pat">${g.pat}</div><div class="g-good">${g.good}</div><div class="g-bad">${g.bad}</div></div>`).join('');}
+  else{let html='';['tenses','wordorder','verbpat','preps','connectors'].forEach(cat=>{const ci=items.filter(g=>g.cat===cat);if(!ci.length)return;html+=`<div class="gcat-title">${catLabels[cat]}</div>`;html+=ci.map(g=>`<div class="gitem ${g.cat}"><div class="g-title">${g.title}</div><div class="g-pat">${g.pat}</div><div class="g-good">${g.good}</div><div class="g-bad">${g.bad}</div></div>`).join('');});list.innerHTML=html;}
+}
+function gft(cat,btn){gcat=cat;document.querySelectorAll('#gfilts .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderGrammar();}
+function buildEfilts(){
+  const counts={tenses:0,wordorder:0,verbpat:0,preps:0,connectors:0,other:0};
+  ERRORS.forEach(e=>counts[e.cat]++);
+  document.getElementById('efilts').innerHTML=['all','tenses','wordorder','verbpat','preps','connectors','other'].map(c=>{
+    const bg=c==='all'?'#F4CCCC':catBg[c];
+    const col=c==='all'?'#8A3030':catCol[c];
+    const label=c==='all'?'All · '+ERRORS.length:catLabels[c]+' · '+counts[c];
+    return chip(label,`eft('${c}',this)`,bg,col,c===ecat);
+  }).join('');
+}
+function renderErrors(){
+  const f=document.getElementById('es2').value.toLowerCase();
+  const items=ERRORS.filter(e=>(ecat==='all'||e.cat===ecat)&&(e.wrong+e.right+e.why).toLowerCase().includes(f));
+  const list=document.getElementById('elist');
+  if(!items.length){list.innerHTML='<p class="empty">No results found.</p>';return;}
+  if(ecat!=='all'){list.innerHTML=items.map(e=>`<div class="eitem ${e.cat}"><div class="e-wrong">❌ ${e.wrong}</div><div class="e-right">✅ ${e.right}</div><div class="e-why">${e.why}</div></div>`).join('');}
+  else{let html='';['tenses','wordorder','verbpat','preps','connectors','other'].forEach(cat=>{const ci=items.filter(e=>e.cat===cat);if(!ci.length)return;html+=`<div class="ecat-title">${catLabels[cat]}</div>`;html+=ci.map(e=>`<div class="eitem ${e.cat}"><div class="e-wrong">❌ ${e.wrong}</div><div class="e-right">✅ ${e.right}</div><div class="e-why">${e.why}</div></div>`).join('');});list.innerHTML=html;}
+}
+function eft(cat,btn){ecat=cat;document.querySelectorAll('#efilts .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderErrors();}
+function rp(f=''){const items=PHRASAL.filter(p=>(p.verb+p.mean+p.ex).toLowerCase().includes(f));document.getElementById('plist').innerHTML=items.length?items.map(p=>`<div class="pitem"><div class="p-verb">${p.verb}</div><div class="p-mean">${p.mean}</div><div class="p-ex">${p.ex}</div></div>`).join(''):'<p class="empty">No results found.</p>';}
+function rq(){
+  document.getElementById('sc').textContent=score+' / '+QUIZ.length;
+  document.getElementById('pfill').style.width=Math.round((cq/QUIZ.length)*100)+'%';
+  if(cq>=QUIZ.length){document.getElementById('pfill').style.width='100%';document.getElementById('qarea').innerHTML=`<div class="qcard"><div class="q-text">Quiz complete! 🎉 Score: ${score} / ${QUIZ.length}</div><button class="opt" style="margin-top:1rem" onclick="restart()">Try again</button></div>`;return;}
+  done=false;
+  const q=QUIZ[cq];
+  document.getElementById('qarea').innerHTML=`<div class="qcard"><div class="q-text">${cq+1}. ${q.q}</div><div class="opts">${q.opts.map((o,i)=>`<button class="opt" onclick="ans(${i})" id="o${i}">${o}</button>`).join('')}</div><div class="qfb" id="qfb"></div><button class="next-btn" id="nb" onclick="nq()">Next question →</button></div>`;
+}
+function ans(i){
+  if(done)return;done=true;
+  const q=QUIZ[cq];
+  document.querySelectorAll('.opt').forEach(b=>b.style.pointerEvents='none');
+  const fb=document.getElementById('qfb'),nb=document.getElementById('nb');
+  if(i===q.c){score++;document.getElementById('o'+i).classList.add('ok');fb.textContent='✅ Correct! '+q.exp;fb.classList.add('show','ok');}
+  else{document.getElementById('o'+i).classList.add('ko');document.getElementById('o'+q.c).classList.add('ok');fb.textContent='❌ '+q.exp;fb.classList.add('show','ko');}
+  document.getElementById('sc').textContent=score+' / '+QUIZ.length;
+  nb.classList.add('show');
+}
+function nq(){cq++;rq();}
+function restart(){cq=0;score=0;rq();}
+buildVfilts();rv();buildGfilts();renderGrammar();rp();buildEfilts();renderErrors();
+</script>
+</body>
+</html>
